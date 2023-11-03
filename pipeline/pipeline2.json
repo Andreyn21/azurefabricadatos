@@ -8,6 +8,10 @@
 				"dependsOn": [],
 				"userProperties": [],
 				"typeProperties": {
+					"pipeline": {
+						"referenceName": "LogisticsAddressCountryRegionStaging",
+						"type": "PipelineReference"
+					},
 					"waitOnCompletion": true
 				}
 			},
