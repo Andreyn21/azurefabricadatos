@@ -1,0 +1,269 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Nombre de instancia de Data Factory"
+		},
+		"AzureBlobStorage1": {
+			"type": "string"
+		},
+		"AzureSqlDatabaseflexonorigen": {
+			"type": "string"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/pipeline3')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Validation1",
+						"type": "Validation",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "cantidad",
+								"type": "DatasetReference"
+							},
+							"timeout": "0.00:01:00",
+							"sleep": 10
+						}
+					},
+					{
+						"name": "Copy data1",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Validation1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.00:20:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "ExcelSource",
+								"additionalColumns": [
+									{
+										"name": "Col_prueba",
+										"value": "666"
+									}
+								],
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true,
+									"modifiedDatetimeStart": "2023-11-03T07:00:00.000Z",
+									"modifiedDatetimeEnd": "2023-11-04T02:00:00.000Z",
+									"enablePartitionDiscovery": false
+								}
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false,
+								"tableOption": "autoCreate",
+								"disableMetricsCollection": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "cantidad",
+								"type": "DatasetReference"
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "genericdataset",
+								"type": "DatasetReference",
+								"parameters": {
+									"schema": "pbr",
+									"tabla": "cantidad_1",
+									"url_key_vault": {
+										"value": "https://kv-azurefeh.vault.azure.net/",
+										"type": "Expression"
+									},
+									"secret_name_key_vault": {
+										"value": "DatabaseConnectionflexonorigen",
+										"type": "Expression"
+									}
+								}
+							}
+						]
+					}
+				],
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/cantidad')]",
+				"[concat(variables('factoryId'), '/datasets/genericdataset')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/cantidad')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "[parameters('AzureBlobStorage1')]",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Excel",
+				"typeProperties": {
+					"sheetName": "Sheet1",
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "cantidad.xlsx",
+						"container": "ejercicio3"
+					},
+					"firstRowAsHeader": true
+				},
+				"schema": [
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/genericdataset')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "[parameters('AzureSqlDatabaseflexonorigen')]",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"url_key_vault": {
+							"value": "@dataset().url_key_vault",
+							"type": "Expression"
+						},
+						"secret_name_key_vault": {
+							"value": "@dataset().secret_name_key_vault",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"schema": {
+						"type": "string"
+					},
+					"tabla": {
+						"type": "string"
+					},
+					"url_key_vault": {
+						"type": "string"
+					},
+					"secret_name_key_vault": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "Item resumen",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Bodega",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Desc. bodega",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Cant. compro. exist.",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Cant. compromisos",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Cant. diferencia",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Cant. adic. compro. exist.",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Cant. adic compromisos",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Cant. adic diferencias",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Col_prueba",
+						"type": "nvarchar"
+					}
+				],
+				"typeProperties": {
+					"schema": {
+						"value": "@dataset().schema",
+						"type": "Expression"
+					},
+					"table": {
+						"value": "@dataset().tabla",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": []
+		}
+	]
+}
