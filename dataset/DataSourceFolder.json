@@ -1,5 +1,5 @@
 {
-	"name": "DataSourceDestination",
+	"name": "DataSourceFolder",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "AzureBlobStorage1",
@@ -10,9 +10,6 @@
 				"type": "string"
 			},
 			"directorio": {
-				"type": "string"
-			},
-			"file_name": {
 				"type": "string"
 			}
 		},
