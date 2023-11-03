@@ -1,0 +1,77 @@
+{
+	"name": "genericdataset",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlDatabase1",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"schema": {
+				"type": "string"
+			},
+			"tabla": {
+				"type": "string"
+			},
+			"url_key_vault": {
+				"type": "string"
+			},
+			"secret_name_key_vault": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "Item resumen",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Bodega",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Desc. bodega",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Cant. compro. exist.",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Cant. compromisos",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Cant. diferencia",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Cant. adic. compro. exist.",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Cant. adic compromisos",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Cant. adic diferencias",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Col_prueba",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": {
+				"value": "@dataset().schema",
+				"type": "Expression"
+			},
+			"table": {
+				"value": "@dataset().tabla",
+				"type": "Expression"
+			}
+		}
+	}
+}
