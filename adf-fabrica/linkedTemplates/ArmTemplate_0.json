@@ -1,0 +1,1541 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Nombre de instancia de Data Factory",
+			"defaultValue": "adf-fabrica"
+		},
+		"AzureBlobStorage1_connectionString": {
+			"type": "secureString",
+			"metadata": "Cadena protegida para \"connectionString\"de \"AzureBlobStorage1\""
+		},
+		"AzureKeyVault_feh_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://kv-azurefeh.vault.azure.net/"
+		},
+		"AzureSqlDatabasedestinofeh_properties_typeProperties_connectionString_secretName": {
+			"type": "string",
+			"defaultValue": "DatabaseConnectiondestinofeh"
+		},
+		"AzureSqlDatabaseflexonorigen_properties_typeProperties_connectionString_secretName": {
+			"type": "string",
+			"defaultValue": "DatabaseConnectionflexonorigen"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureBlobStorage1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"connectionString": "[parameters('AzureBlobStorage1_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureKeyVault_feh')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureKeyVault",
+				"typeProperties": {
+					"baseUrl": "[parameters('AzureKeyVault_feh_properties_typeProperties_baseUrl')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/cantidad')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Excel",
+				"typeProperties": {
+					"sheetName": "Sheet1",
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "cantidad.xlsx",
+						"container": "ejercicio3"
+					},
+					"firstRowAsHeader": true
+				},
+				"schema": [
+					{
+						"name": "Item resumen",
+						"type": "String"
+					},
+					{
+						"name": "Bodega",
+						"type": "String"
+					},
+					{
+						"name": "Desc. bodega",
+						"type": "String"
+					},
+					{
+						"name": "Cant. compro. exist.",
+						"type": "String"
+					},
+					{
+						"name": "Cant. compromisos",
+						"type": "String"
+					},
+					{
+						"name": "Cant. diferencia",
+						"type": "String"
+					},
+					{
+						"name": "Cant. adic. compro. exist.",
+						"type": "String"
+					},
+					{
+						"name": "Cant. adic compromisos",
+						"type": "String"
+					},
+					{
+						"name": "Cant. adic diferencias",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureSqlDatabasedestinofeh')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"connectionString": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "AzureKeyVault_feh",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "[parameters('AzureSqlDatabasedestinofeh_properties_typeProperties_connectionString_secretName')]",
+						"secretVersion": "47c61d43cb1748a38c10a1fd60934cc6"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureKeyVault_feh')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureSqlDatabaseflexonorigen')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"parameters": {
+					"url_key_vault": {
+						"type": "string"
+					},
+					"secret_name_key_vault": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"connectionString": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "AzureKeyVault_feh",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "[parameters('AzureSqlDatabaseflexonorigen_properties_typeProperties_connectionString_secretName')]",
+						"secretVersion": "fb557dfb969f449fabecb5705382b4a8"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureKeyVault_feh')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureSqlTable1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabasedestinofeh",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"schema": {
+						"type": "string"
+					},
+					"Table": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": {
+						"value": "@dataset().schema",
+						"type": "Expression"
+					},
+					"table": {
+						"value": "@dataset().Table",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabasedestinofeh')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureSqlTable2')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabaseflexonorigen",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"schema2": {
+						"type": "string"
+					},
+					"Table": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": {
+						"value": "@dataset().schema2",
+						"type": "Expression"
+					},
+					"table": {
+						"value": "@dataset().Table",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabaseflexonorigen')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/genericdataset')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabaseflexonorigen",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"url_key_vault": {
+							"value": "@dataset().url_key_vault",
+							"type": "Expression"
+						},
+						"secret_name_key_vault": {
+							"value": "@dataset().secret_name_key_vault",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"schema": {
+						"type": "string"
+					},
+					"tabla": {
+						"type": "string"
+					},
+					"url_key_vault": {
+						"type": "string"
+					},
+					"secret_name_key_vault": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": {
+						"value": "@dataset().schema",
+						"type": "Expression"
+					},
+					"table": {
+						"value": "@dataset().tabla",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabaseflexonorigen')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LogisticsAddressCountryRegionStaging')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Set variable1",
+						"type": "SetVariable",
+						"dependsOn": [],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "tabla",
+							"value": {
+								"value": "@json('[\n{\n      \"schema\": \"dbo\",    \n        \"schema2\": \"dbt\",     \n        \"tabla\":\"LogisticsAddressCountryRegionStaging\" ,   \n        \"pk_integracion\": \"COUNTRYREGION\"\n        },\n    ]')",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "ForEach1",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "Set variable1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@variables('tabla')",
+								"type": "Expression"
+							},
+							"isSequential": true,
+							"activities": [
+								{
+									"name": "Copy data1",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "AzureSqlSource",
+											"queryTimeout": "02:00:00",
+											"partitionOption": "None"
+										},
+										"sink": {
+											"type": "AzureSqlSink",
+											"writeBehavior": "upsert",
+											"upsertSettings": {
+												"useTempDB": true,
+												"keys": [
+													"COUNTRYREGION"
+												]
+											},
+											"sqlWriterUseTableLock": false,
+											"tableOption": "autoCreate",
+											"disableMetricsCollection": false
+										},
+										"enableStaging": false,
+										"translator": {
+											"type": "TabularTranslator",
+											"typeConversion": true,
+											"typeConversionSettings": {
+												"allowDataTruncation": true,
+												"treatBooleanAsNumber": false
+											}
+										}
+									},
+									"inputs": [
+										{
+											"referenceName": "AzureSqlTable1",
+											"type": "DatasetReference",
+											"parameters": {
+												"schema": {
+													"value": "@item().schema",
+													"type": "Expression"
+												},
+												"Table": {
+													"value": "@item().tabla",
+													"type": "Expression"
+												}
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "AzureSqlTable2",
+											"type": "DatasetReference",
+											"parameters": {
+												"schema2": {
+													"value": "@item().schema2",
+													"type": "Expression"
+												},
+												"Table": {
+													"value": "@item().tabla",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"schema": {
+						"type": "string",
+						"defaultValue": "dbo"
+					},
+					"schema2": {
+						"type": "string",
+						"defaultValue": "dbt"
+					}
+				},
+				"variables": {
+					"tabla": {
+						"type": "Array",
+						"defaultValue": [
+							"LogisticsAddressCountryRegionStaging"
+						]
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/AzureSqlTable1')]",
+				"[concat(variables('factoryId'), '/datasets/AzureSqlTable2')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/PaymTermInvoiceStaging')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Set variable1",
+						"type": "SetVariable",
+						"dependsOn": [],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "tabla",
+							"value": {
+								"value": "@json('[\n{\n      \"schema\": \"dbo\",    \n        \"schema2\": \"dbt\",     \n        \"tabla\":\"PaymTermInvoiceStaging\" ,   \n        \"pk_integracion\": \"DATAAREAID\"\n        },\n    ]')",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "ForEach1",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "Set variable1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@variables('tabla')",
+								"type": "Expression"
+							},
+							"isSequential": true,
+							"activities": [
+								{
+									"name": "Copy data1",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "AzureSqlSource",
+											"queryTimeout": "02:00:00",
+											"partitionOption": "None"
+										},
+										"sink": {
+											"type": "AzureSqlSink",
+											"writeBehavior": "upsert",
+											"upsertSettings": {
+												"useTempDB": true,
+												"keys": [
+													"DATAAREAID"
+												]
+											},
+											"sqlWriterUseTableLock": false,
+											"tableOption": "autoCreate",
+											"disableMetricsCollection": false
+										},
+										"enableStaging": false,
+										"translator": {
+											"type": "TabularTranslator",
+											"typeConversion": true,
+											"typeConversionSettings": {
+												"allowDataTruncation": true,
+												"treatBooleanAsNumber": false
+											}
+										}
+									},
+									"inputs": [
+										{
+											"referenceName": "AzureSqlTable1",
+											"type": "DatasetReference",
+											"parameters": {
+												"schema": {
+													"value": "@item().schema",
+													"type": "Expression"
+												},
+												"Table": {
+													"value": "@item().tabla",
+													"type": "Expression"
+												}
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "AzureSqlTable2",
+											"type": "DatasetReference",
+											"parameters": {
+												"schema2": {
+													"value": "@item().schema2",
+													"type": "Expression"
+												},
+												"Table": {
+													"value": "@item().tabla",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"schema": {
+						"type": "string",
+						"defaultValue": "dbo"
+					},
+					"schema2": {
+						"type": "string",
+						"defaultValue": "dbt"
+					}
+				},
+				"variables": {
+					"tabla": {
+						"type": "Array",
+						"defaultValue": [
+							"PaymTermInvoiceStaging"
+						]
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/AzureSqlTable1')]",
+				"[concat(variables('factoryId'), '/datasets/AzureSqlTable2')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/UFTProjInvoiceJourStaging')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Set variable1",
+						"type": "SetVariable",
+						"dependsOn": [],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "tabla",
+							"value": {
+								"value": "@json('[\n{\n      \"schema\": \"dbo\",    \n        \"schema2\": \"dbt\",     \n        \"tabla\":\"UFTProjInvoiceJourStaging\" ,   \n        \"pk_integracion\": \"DATAAREAID\"\n        },\n    ]')",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "ForEach1",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "Set variable1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@variables('tabla')",
+								"type": "Expression"
+							},
+							"isSequential": true,
+							"activities": [
+								{
+									"name": "Copy data1",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "AzureSqlSource",
+											"queryTimeout": "02:00:00",
+											"partitionOption": "None"
+										},
+										"sink": {
+											"type": "AzureSqlSink",
+											"writeBehavior": "upsert",
+											"upsertSettings": {
+												"useTempDB": true,
+												"keys": [
+													"DATAAREAID"
+												]
+											},
+											"sqlWriterUseTableLock": false,
+											"tableOption": "autoCreate",
+											"disableMetricsCollection": false
+										},
+										"enableStaging": false,
+										"translator": {
+											"type": "TabularTranslator",
+											"typeConversion": true,
+											"typeConversionSettings": {
+												"allowDataTruncation": true,
+												"treatBooleanAsNumber": false
+											}
+										}
+									},
+									"inputs": [
+										{
+											"referenceName": "AzureSqlTable1",
+											"type": "DatasetReference",
+											"parameters": {
+												"schema": {
+													"value": "@item().schema",
+													"type": "Expression"
+												},
+												"Table": {
+													"value": "@item().tabla",
+													"type": "Expression"
+												}
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "AzureSqlTable2",
+											"type": "DatasetReference",
+											"parameters": {
+												"schema2": {
+													"value": "@item().schema2",
+													"type": "Expression"
+												},
+												"Table": {
+													"value": "@item().tabla",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"schema": {
+						"type": "string",
+						"defaultValue": "dbo"
+					},
+					"schema2": {
+						"type": "string",
+						"defaultValue": "dbt"
+					}
+				},
+				"variables": {
+					"tabla": {
+						"type": "Array",
+						"defaultValue": [
+							"UFTProjInvoiceJourStaging"
+						]
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/AzureSqlTable1')]",
+				"[concat(variables('factoryId'), '/datasets/AzureSqlTable2')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/aqs_canton')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Set variable1",
+						"type": "SetVariable",
+						"dependsOn": [],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "tabla",
+							"value": {
+								"value": "@json('[\n{\n      \"schema\": \"dbo\",    \n        \"schema2\": \"dbt\",     \n        \"tabla\":\"aqs_canton\" ,   \n        \"pk_integracion\": \"Codigo\"\n        },\n    ]')",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "ForEach1",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "Set variable1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@variables('tabla')",
+								"type": "Expression"
+							},
+							"isSequential": true,
+							"activities": [
+								{
+									"name": "Copy data1",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "AzureSqlSource",
+											"queryTimeout": "02:00:00",
+											"partitionOption": "None"
+										},
+										"sink": {
+											"type": "AzureSqlSink",
+											"writeBehavior": "upsert",
+											"upsertSettings": {
+												"useTempDB": true,
+												"keys": [
+													"Codigo"
+												]
+											},
+											"sqlWriterUseTableLock": false,
+											"tableOption": "autoCreate",
+											"disableMetricsCollection": false
+										},
+										"enableStaging": false,
+										"translator": {
+											"type": "TabularTranslator",
+											"typeConversion": true,
+											"typeConversionSettings": {
+												"allowDataTruncation": true,
+												"treatBooleanAsNumber": false
+											}
+										}
+									},
+									"inputs": [
+										{
+											"referenceName": "AzureSqlTable1",
+											"type": "DatasetReference",
+											"parameters": {
+												"schema": {
+													"value": "@item().schema",
+													"type": "Expression"
+												},
+												"Table": {
+													"value": "@item().tabla",
+													"type": "Expression"
+												}
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "AzureSqlTable2",
+											"type": "DatasetReference",
+											"parameters": {
+												"schema2": {
+													"value": "@item().schema2",
+													"type": "Expression"
+												},
+												"Table": {
+													"value": "@item().tabla",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"schema": {
+						"type": "string",
+						"defaultValue": "dbo"
+					},
+					"schema2": {
+						"type": "string",
+						"defaultValue": "dbt"
+					}
+				},
+				"variables": {
+					"tabla": {
+						"type": "Array",
+						"defaultValue": [
+							"aqs_canton"
+						]
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/AzureSqlTable1')]",
+				"[concat(variables('factoryId'), '/datasets/AzureSqlTable2')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/aqs_cliente')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Set variable1",
+						"type": "SetVariable",
+						"dependsOn": [],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "tabla",
+							"value": {
+								"value": "@json('[\n{\n      \"schema\": \"dbo\",    \n        \"schema2\": \"dbt\",     \n        \"tabla\":\"aqs_cliente\" ,   \n        \"pk_integracion\": \"IdClienteCrm\"\n        },\n    ]')",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "ForEach1",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "Set variable1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@variables('tabla')",
+								"type": "Expression"
+							},
+							"isSequential": true,
+							"activities": [
+								{
+									"name": "Copy data1",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "AzureSqlSource",
+											"queryTimeout": "02:00:00",
+											"partitionOption": "None"
+										},
+										"sink": {
+											"type": "AzureSqlSink",
+											"writeBehavior": "upsert",
+											"upsertSettings": {
+												"useTempDB": true,
+												"keys": [
+													"IdClienteCrm"
+												]
+											},
+											"sqlWriterUseTableLock": false,
+											"tableOption": "autoCreate",
+											"disableMetricsCollection": false
+										},
+										"enableStaging": false,
+										"translator": {
+											"type": "TabularTranslator",
+											"typeConversion": true,
+											"typeConversionSettings": {
+												"allowDataTruncation": true,
+												"treatBooleanAsNumber": false
+											}
+										}
+									},
+									"inputs": [
+										{
+											"referenceName": "AzureSqlTable1",
+											"type": "DatasetReference",
+											"parameters": {
+												"schema": {
+													"value": "@item().schema",
+													"type": "Expression"
+												},
+												"Table": {
+													"value": "@item().tabla",
+													"type": "Expression"
+												}
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "AzureSqlTable2",
+											"type": "DatasetReference",
+											"parameters": {
+												"schema2": {
+													"value": "@item().schema2",
+													"type": "Expression"
+												},
+												"Table": {
+													"value": "@item().tabla",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"schema": {
+						"type": "string",
+						"defaultValue": "dbo"
+					},
+					"schema2": {
+						"type": "string",
+						"defaultValue": "dbt"
+					}
+				},
+				"variables": {
+					"tabla": {
+						"type": "Array",
+						"defaultValue": [
+							"aqs_cliente"
+						]
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/AzureSqlTable1')]",
+				"[concat(variables('factoryId'), '/datasets/AzureSqlTable2')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pipeline1')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Set variable1",
+						"type": "SetVariable",
+						"dependsOn": [],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "Tabla",
+							"value": {
+								"value": "@json('[\n{\n      \"schema\": \"finance\",    \n        \"schema2\": \"dbo\",     \n        \"tabla\":\"LogisticsAddressCountryRegionStaging\" ,   \n        \"pk_integracion\": \"COUNTRYREGION\"\n        },\n\n\t\t {\n      \"schema\": \"finance\",    \n        \"schema2\": \"dbo\",     \n        \"tabla\":\"PaymTermInvoiceStaging\" ,   \n        \"pk_integracion\": \"DATAAREAID\"\n        },\n\n\t\t {\n      \"schema\": \"finance\",    \n        \"schema2\": \"dbo\",     \n        \"tabla\":\"UFTProjInvoiceJourStaging\" ,   \n        \"pk_integracion\": \"DATAAREAID\"\n        },\n\n         {\n      \"schema\": \"finance\",    \n        \"schema2\": \"dbo\",     \n        \"tabla\":\"aqs_canton\" ,   \n        \"pk_integracion\": \"Codigo\"\n        },\n\n        {\n      \"schema\": \"finance\",    \n        \"schema2\": \"dbo\",     \n        \"tabla\":\"aqs_cliente\" ,   \n        \"pk_integracion\": \"IdClienteCrm\"\n        },\n\n        ]')",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "ForEach1",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "Set variable1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [
+							{
+								"name": "source",
+								"value": "@{item().schema}.@{item().tabla}"
+							},
+							{
+								"name": "destination",
+								"value": "@{item().schema2}.@{item().tabla}"
+							}
+						],
+						"typeProperties": {
+							"items": {
+								"value": "@variables('Tabla')",
+								"type": "Expression"
+							},
+							"isSequential": true,
+							"activities": [
+								{
+									"name": "Copy data1",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "AzureSqlSource",
+											"queryTimeout": "02:00:00",
+											"partitionOption": "None"
+										},
+										"sink": {
+											"type": "AzureSqlSink",
+											"writeBehavior": "insert",
+											"sqlWriterUseTableLock": false,
+											"tableOption": "autoCreate",
+											"disableMetricsCollection": false
+										},
+										"enableStaging": false,
+										"translator": {
+											"type": "TabularTranslator",
+											"typeConversion": true,
+											"typeConversionSettings": {
+												"allowDataTruncation": true,
+												"treatBooleanAsNumber": false
+											}
+										}
+									},
+									"inputs": [
+										{
+											"referenceName": "AzureSqlTable1",
+											"type": "DatasetReference",
+											"parameters": {
+												"schema": {
+													"value": "@item().schema",
+													"type": "Expression"
+												},
+												"Table": {
+													"value": "@item().tabla",
+													"type": "Expression"
+												}
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "AzureSqlTable2",
+											"type": "DatasetReference",
+											"parameters": {
+												"schema2": {
+													"value": "@item().schema2",
+													"type": "Expression"
+												},
+												"Table": {
+													"value": "@item().tabla",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"schema": {
+						"type": "string",
+						"defaultValue": "finance"
+					},
+					"schema2": {
+						"type": "string",
+						"defaultValue": "dbo"
+					}
+				},
+				"variables": {
+					"Tabla": {
+						"type": "Array",
+						"defaultValue": [
+							"LogisticsAddressCountryRegionStaging",
+							"PaymTermInvoiceStaging",
+							"UFTProjInvoiceJourStaging",
+							"aqs_canton",
+							"aqs_cliente"
+						]
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/AzureSqlTable1')]",
+				"[concat(variables('factoryId'), '/datasets/AzureSqlTable2')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pipeline3')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Validation1",
+						"type": "Validation",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "cantidad",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"timeout": "0.12:00:00",
+							"sleep": 10
+						}
+					},
+					{
+						"name": "Copy data1",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Validation1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "ExcelSource",
+								"additionalColumns": [
+									{
+										"name": "Col_prueba",
+										"value": "666"
+									}
+								],
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true,
+									"modifiedDatetimeStart": "2023-11-03T00:00:00.000Z",
+									"modifiedDatetimeEnd": "2023-11-03T02:00:00.000Z",
+									"enablePartitionDiscovery": false
+								}
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false,
+								"tableOption": "autoCreate",
+								"disableMetricsCollection": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "Item resumen",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Item resumen",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Bodega",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Bodega",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Desc. bodega",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Desc. bodega",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Cant. compro. exist.",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Cant. compro. exist.",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Cant. compromisos",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Cant. compromisos",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Cant. diferencia",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Cant. diferencia",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Cant. adic. compro. exist.",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Cant. adic. compro. exist.",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Cant. adic compromisos",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Cant. adic compromisos",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Cant. adic diferencias",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Cant. adic diferencias",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Col_prueba",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Col_prueba",
+											"type": "String",
+											"physicalType": "String"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "cantidad",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "genericdataset",
+								"type": "DatasetReference",
+								"parameters": {
+									"schema": "pbr",
+									"tabla": "cantidad_1",
+									"url_key_vault": {
+										"value": "https://kv-azurefeh.vault.azure.net/",
+										"type": "Expression"
+									},
+									"secret_name_key_vault": {
+										"value": "DatabaseConnectionflexonorigen",
+										"type": "Expression"
+									}
+								}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/cantidad')]",
+				"[concat(variables('factoryId'), '/datasets/genericdataset')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pipeline2')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "LogisticsAddressCountryRegionStaging",
+						"type": "ExecutePipeline",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "LogisticsAddressCountryRegionStaging",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {}
+						}
+					},
+					{
+						"name": "PaymTermInvoiceStaging",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "LogisticsAddressCountryRegionStaging",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "PaymTermInvoiceStaging",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {}
+						}
+					},
+					{
+						"name": "UFTProjInvoiceJourStaging",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "PaymTermInvoiceStaging",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "UFTProjInvoiceJourStaging",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {}
+						}
+					},
+					{
+						"name": "aqs_canton",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "UFTProjInvoiceJourStaging",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "aqs_canton",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {}
+						}
+					},
+					{
+						"name": "aqs_cliente",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "aqs_canton",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "aqs_cliente",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/LogisticsAddressCountryRegionStaging')]",
+				"[concat(variables('factoryId'), '/pipelines/PaymTermInvoiceStaging')]",
+				"[concat(variables('factoryId'), '/pipelines/UFTProjInvoiceJourStaging')]",
+				"[concat(variables('factoryId'), '/pipelines/aqs_canton')]",
+				"[concat(variables('factoryId'), '/pipelines/aqs_cliente')]"
+			]
+		}
+	]
+}
