@@ -17,11 +17,7 @@
 		"type": "Binary",
 		"typeProperties": {
 			"location": {
-				"type": "AzureBlobStorageLocation",
-				"container": {
-					"value": "@dataset().contenedor",
-					"type": "Expression"
-				}
+				"type": "AzureBlobStorageLocation"
 			}
 		}
 	}
