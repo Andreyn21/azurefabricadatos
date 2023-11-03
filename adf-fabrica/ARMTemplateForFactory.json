@@ -1058,7 +1058,7 @@
 								"type": "DatasetReference",
 								"parameters": {}
 							},
-							"timeout": "0.12:00:00",
+							"timeout": "0.00:01:00",
 							"sleep": 10
 						}
 					},
@@ -1074,7 +1074,7 @@
 							}
 						],
 						"policy": {
-							"timeout": "0.12:00:00",
+							"timeout": "0.00:20:00",
 							"retry": 0,
 							"retryIntervalInSeconds": 30,
 							"secureOutput": false,
@@ -1093,8 +1093,8 @@
 								"storeSettings": {
 									"type": "AzureBlobStorageReadSettings",
 									"recursive": true,
-									"modifiedDatetimeStart": "2023-11-03T00:00:00.000Z",
-									"modifiedDatetimeEnd": "2023-11-03T02:00:00.000Z",
+									"modifiedDatetimeStart": "2023-11-03T07:00:00.000Z",
+									"modifiedDatetimeEnd": "2023-11-04T02:00:00.000Z",
 									"enablePartitionDiscovery": false
 								}
 							},
@@ -1108,127 +1108,6 @@
 							"enableStaging": false,
 							"translator": {
 								"type": "TabularTranslator",
-								"mappings": [
-									{
-										"source": {
-											"name": "Item resumen",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Item resumen",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "Bodega",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Bodega",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "Desc. bodega",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Desc. bodega",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "Cant. compro. exist.",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Cant. compro. exist.",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "Cant. compromisos",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Cant. compromisos",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "Cant. diferencia",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Cant. diferencia",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "Cant. adic. compro. exist.",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Cant. adic. compro. exist.",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "Cant. adic compromisos",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Cant. adic compromisos",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "Cant. adic diferencias",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Cant. adic diferencias",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "Col_prueba",
-											"type": "String"
-										},
-										"sink": {
-											"name": "Col_prueba",
-											"type": "String",
-											"physicalType": "String"
-										}
-									}
-								],
 								"typeConversion": true,
 								"typeConversionSettings": {
 									"allowDataTruncation": true,
@@ -1365,39 +1244,30 @@
 				},
 				"schema": [
 					{
-						"name": "Item resumen",
 						"type": "String"
 					},
 					{
-						"name": "Bodega",
 						"type": "String"
 					},
 					{
-						"name": "Desc. bodega",
 						"type": "String"
 					},
 					{
-						"name": "Cant. compro. exist.",
 						"type": "String"
 					},
 					{
-						"name": "Cant. compromisos",
 						"type": "String"
 					},
 					{
-						"name": "Cant. diferencia",
 						"type": "String"
 					},
 					{
-						"name": "Cant. adic. compro. exist.",
 						"type": "String"
 					},
 					{
-						"name": "Cant. adic compromisos",
 						"type": "String"
 					},
 					{
-						"name": "Cant. adic diferencias",
 						"type": "String"
 					}
 				]
@@ -1441,7 +1311,48 @@
 				},
 				"annotations": [],
 				"type": "AzureSqlTable",
-				"schema": [],
+				"schema": [
+					{
+						"name": "Item resumen",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Bodega",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Desc. bodega",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Cant. compro. exist.",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Cant. compromisos",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Cant. diferencia",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Cant. adic. compro. exist.",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Cant. adic compromisos",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Cant. adic diferencias",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Col_prueba",
+						"type": "nvarchar"
+					}
+				],
 				"typeProperties": {
 					"schema": {
 						"value": "@dataset().schema",
