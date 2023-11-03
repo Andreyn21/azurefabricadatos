@@ -139,12 +139,6 @@
 					"aqs_canton",
 					"aqs_cliente"
 				]
-			},
-			"tabla": {
-				"type": "Array",
-				"defaultValue": [
-					"LogisticsAddressCountryRegionStaging"
-				]
 			}
 		},
 		"annotations": []
