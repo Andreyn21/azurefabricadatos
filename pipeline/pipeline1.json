@@ -30,7 +30,16 @@
 						]
 					}
 				],
-				"userProperties": [],
+				"userProperties": [
+					{
+						"name": "source",
+						"value": "@{item().schema}.@{item().tabla}"
+					},
+					{
+						"name": "destination",
+						"value": "@{item().schema2}.@{item().tabla}"
+					}
+				],
 				"typeProperties": {
 					"items": {
 						"value": "@variables('Tabla')",
@@ -66,44 +75,6 @@
 								"enableStaging": false,
 								"translator": {
 									"type": "TabularTranslator",
-									"mappings": [
-										{
-											"source": {
-												"name": "Codigo",
-												"type": "Guid",
-												"physicalType": "uniqueidentifier"
-											},
-											"sink": {
-												"name": "Codigo",
-												"type": "Guid",
-												"physicalType": "Guid"
-											}
-										},
-										{
-											"source": {
-												"name": "Nombre",
-												"type": "String",
-												"physicalType": "varchar"
-											},
-											"sink": {
-												"name": "Nombre",
-												"type": "String",
-												"physicalType": "String"
-											}
-										},
-										{
-											"source": {
-												"name": "CodigoDane",
-												"type": "String",
-												"physicalType": "nvarchar"
-											},
-											"sink": {
-												"name": "CodigoDane",
-												"type": "String",
-												"physicalType": "String"
-											}
-										}
-									],
 									"typeConversion": true,
 									"typeConversionSettings": {
 										"allowDataTruncation": true,
