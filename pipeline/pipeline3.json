@@ -52,12 +52,166 @@
 							"enablePartitionDiscovery": false
 						}
 					},
-					"enableStaging": false
+					"sink": {
+						"type": "AzureSqlSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false,
+						"tableOption": "autoCreate",
+						"disableMetricsCollection": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "Item resumen",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Item resumen",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Bodega",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Bodega",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Desc. bodega",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Desc. bodega",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Cant. compro. exist.",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Cant. compro. exist.",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Cant. compromisos",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Cant. compromisos",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Cant. diferencia",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Cant. diferencia",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Cant. adic. compro. exist.",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Cant. adic. compro. exist.",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Cant. adic compromisos",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Cant. adic compromisos",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Cant. adic diferencias",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Cant. adic diferencias",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Col_prueba",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Col_prueba",
+									"type": "String",
+									"physicalType": "String"
+								}
+							}
+						],
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
 				},
 				"inputs": [
 					{
 						"referenceName": "cantidad",
 						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "genericdataset",
+						"type": "DatasetReference",
+						"parameters": {
+							"schema": "pbr",
+							"tabla": "cantidad_1",
+							"url_key_vault": {
+								"value": "https://kv-azurefeh.vault.azure.net/",
+								"type": "Expression"
+							},
+							"secret_name_key_vault": {
+								"value": "DatabaseConnectionflexonorigen",
+								"type": "Expression"
+							}
+						}
 					}
 				]
 			}
