@@ -14,7 +14,7 @@
 				"typeProperties": {
 					"variableName": "tabla",
 					"value": {
-						"value": "@json('[\n{\n      \"schema\": \"dbo\",    \n        \"schema2\": \"dbt\",     \n        \"tabla\":\"UFTProjInvoiceJourStaging\" ,   \n        \"pk_integracion\": \"DATAAREAID\"\n        },\n    ]')",
+						"value": "@json('[\n{\n      \"schema\": \"dbo\",    \n        \"schema2\": \"dbt\",     \n        \"tabla\":\"aqs_canton\" ,   \n        \"pk_integracion\": \"Codigo\"\n        },\n    ]')",
 						"type": "Expression"
 					}
 				}
@@ -66,6 +66,7 @@
 										]
 									},
 									"sqlWriterUseTableLock": false,
+									"tableOption": "autoCreate",
 									"disableMetricsCollection": false
 								},
 								"enableStaging": false,
