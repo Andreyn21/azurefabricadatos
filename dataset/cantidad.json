@@ -1,0 +1,58 @@
+{
+	"name": "cantidad",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureBlobStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Excel",
+		"typeProperties": {
+			"sheetName": "Sheet1",
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "cantidad.xlsx",
+				"container": "ejercicio3"
+			},
+			"firstRowAsHeader": true
+		},
+		"schema": [
+			{
+				"name": "Item resumen",
+				"type": "String"
+			},
+			{
+				"name": "Bodega",
+				"type": "String"
+			},
+			{
+				"name": "Desc. bodega",
+				"type": "String"
+			},
+			{
+				"name": "Cant. compro. exist.",
+				"type": "String"
+			},
+			{
+				"name": "Cant. compromisos",
+				"type": "String"
+			},
+			{
+				"name": "Cant. diferencia",
+				"type": "String"
+			},
+			{
+				"name": "Cant. adic. compro. exist.",
+				"type": "String"
+			},
+			{
+				"name": "Cant. adic compromisos",
+				"type": "String"
+			},
+			{
+				"name": "Cant. adic diferencias",
+				"type": "String"
+			}
+		]
+	}
+}
