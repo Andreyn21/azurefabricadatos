@@ -51,8 +51,65 @@
 							},
 							"userProperties": [],
 							"typeProperties": {
-								"enableStaging": false
-							}
+								"source": {
+									"type": "AzureSqlSource",
+									"queryTimeout": "02:00:00",
+									"partitionOption": "None"
+								},
+								"sink": {
+									"type": "AzureSqlSink",
+									"writeBehavior": "insert",
+									"sqlWriterUseTableLock": false,
+									"tableOption": "autoCreate",
+									"disableMetricsCollection": false
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"typeConversion": true,
+									"typeConversionSettings": {
+										"allowDataTruncation": true,
+										"treatBooleanAsNumber": false
+									}
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "AzureSqlTable1",
+									"type": "DatasetReference",
+									"parameters": {
+										"url_key_vault": "https://kv-azurefeh.vault.azure.net/",
+										"schema": {
+											"value": "@item().schema",
+											"type": "Expression"
+										},
+										"Table": {
+											"value": "@item().tabla",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "AzureSqlTable2",
+									"type": "DatasetReference",
+									"parameters": {
+										"url_key_vault": {
+											"value": "https://kv-azurefeh.vault.azure.net/",
+											"type": "Expression"
+										},
+										"schema2": {
+											"value": "@item().schema2",
+											"type": "Expression"
+										},
+										"Table": {
+											"value": "@item().tabla",
+											"type": "Expression"
+										}
+									}
+								}
+							]
 						}
 					]
 				}
