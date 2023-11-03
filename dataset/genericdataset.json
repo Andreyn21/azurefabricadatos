@@ -31,7 +31,48 @@
 		},
 		"annotations": [],
 		"type": "AzureSqlTable",
-		"schema": [],
+		"schema": [
+			{
+				"name": "Item resumen",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Bodega",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Desc. bodega",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Cant. compro. exist.",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Cant. compromisos",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Cant. diferencia",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Cant. adic. compro. exist.",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Cant. adic compromisos",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Cant. adic diferencias",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Col_prueba",
+				"type": "nvarchar"
+			}
+		],
 		"typeProperties": {
 			"schema": {
 				"value": "@dataset().schema",
