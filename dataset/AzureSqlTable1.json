@@ -2,7 +2,7 @@
 	"name": "AzureSqlTable1",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "AzureSqlDatabaseflexonorigen",
+			"referenceName": "AzureSqlDatabasedestinofeh",
 			"type": "LinkedServiceReference"
 		},
 		"parameters": {
