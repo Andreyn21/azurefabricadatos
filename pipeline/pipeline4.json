@@ -17,7 +17,17 @@
 				"typeProperties": {
 					"dataset": {
 						"referenceName": "DataSourceFolder",
-						"type": "DatasetReference"
+						"type": "DatasetReference",
+						"parameters": {
+							"contenedor": {
+								"value": "@pipeline().parameters.DestinationStore_Location",
+								"type": "Expression"
+							},
+							"directorio": {
+								"value": "@pipeline().parameters.SourceStore_Directory",
+								"type": "Expression"
+							}
+						}
 					},
 					"fieldList": [],
 					"storeSettings": {
@@ -57,10 +67,10 @@
 			}
 		],
 		"parameters": {
-			"SourceStore_Directory": {
+			"SourceStore_Location": {
 				"type": "string"
 			},
-			"Sourcestore_Directory": {
+			"SourceStore_Directory": {
 				"type": "string"
 			},
 			"DestinationStore_Location": {
