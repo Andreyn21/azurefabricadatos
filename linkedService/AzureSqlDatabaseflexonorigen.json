@@ -1,6 +1,14 @@
 {
 	"name": "AzureSqlDatabaseflexonorigen",
 	"properties": {
+		"parameters": {
+			"url_key_vault": {
+				"type": "string"
+			},
+			"secret_name_key_vault": {
+				"type": "string"
+			}
+		},
 		"annotations": [],
 		"type": "AzureSqlDatabase",
 		"typeProperties": {
