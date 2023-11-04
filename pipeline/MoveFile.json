@@ -82,7 +82,8 @@
 						"value": "@activity('FilterFile').output.value",
 						"type": "Expression"
 					},
-					"isSequential": true,
+					"isSequential": false,
+					"batchCount": 20,
 					"activities": [
 						{
 							"name": "CopyFile",
@@ -126,6 +127,10 @@
 										},
 										"directorio": {
 											"value": "@pipeline().parameters.SourceStore_Directory",
+											"type": "Expression"
+										},
+										"File_name": {
+											"value": "@item().name",
 											"type": "Expression"
 										}
 									}
