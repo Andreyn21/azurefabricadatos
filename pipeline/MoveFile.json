@@ -56,11 +56,11 @@
 				"userProperties": [],
 				"typeProperties": {
 					"items": {
-						"value": "@activity('GetMetaData').output.childItems",
+						"value": "@activity('GetFileList').output.childItems",
 						"type": "Expression"
 					},
 					"condition": {
-						"value": "@equals(item().name, 'xlsb') ",
+						"value": "@endswith(item().name,'.xlsb')",
 						"type": "Expression"
 					}
 				}
